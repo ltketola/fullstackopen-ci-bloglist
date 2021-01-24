@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI1ZjVlMDE2YThlMWViNWMxMjIyMzEwZGUiLCJpYXQiOjE2MDA0NDU4NjN9.3l8OWNMkCEYcGBhuZp-01gJT2BB7c49ZX0Pkbpf_2GU
+
+{
+  "title": "Fake news",
+  "author": "Jane Doe",
+  "url": "news.com",
+  "likes": 0
+}
