@@ -1,4 +1,4 @@
-const _ = require('@util/lodash')
+const _ = require('lodash')
 
 const totalLikes = (blogs) => {
   if (blogs.length === 0) {

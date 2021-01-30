@@ -1,4 +1,4 @@
-const { MONGODB_URI } = require('@util/common')
+const { MONGODB_URI } = require('./util/common')
 const express = require('express')
 require('express-async-errors')
 const cors = require('cors')

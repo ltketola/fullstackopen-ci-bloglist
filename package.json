@@ -81,5 +81,10 @@
     "@middleware": "server/middleware",
     "@util": "server/util"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000",
+  "jest": { 
+    "transform": { 
+      "^.+\\.jsx?$": "babel-jest" 
+    }  
+  }
 }

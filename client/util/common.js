@@ -1,1 +1,1 @@
-export * from '@root/config/common'
+export * from '../../config/common'
