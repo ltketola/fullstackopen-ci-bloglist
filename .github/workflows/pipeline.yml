@@ -1,0 +1,76 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+
+jobs:
+  simple_deployment_pipeline:    
+    runs-on: ubuntu-18.04    
+    steps:      
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: npm install
+        run: npm install
+      - name: lint
+        run: npm run eslint
+      - name: build
+        run: npm run build
+      - name: test
+        run: npm run test
+      - name: e2e tests
+        uses: cypress-io/github-action@v2
+        with:
+          start: npm run start-prod
+          wait-on: http://localhost:5000
+      - name: Deploy to Heroku 
+        if: ${{ github.event_name == 'push' &&  !contains(join(toJSON(github.event.commits.*.message)), '#skip') }}
+        uses: akhileshns/heroku-deploy@v3.8.9
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "fullstackopen-pokedex-demo"
+          heroku_email: "ltketola@gmail.com"
+          healthcheck: "https://fullstackopen-pokedex-demo.herokuapp.com/health"
+          checkstring: "ok"
+          rollbackonhealthcheckfailed: true
+      - name: Successful deployment notification to Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: commit,took
+          custom_payload: |
+            {
+              'username': 'github_action',
+              'icon_emoji': ':mittens_bernie:',
+              'attachments': [{
+                'color': 'good',
+                'text': `A new version deployed to https://fullstackopen-pokedex-demo.herokuapp.com (${process.env.AS_COMMIT}). The build took ${process.env.AS_TOOK}.`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: success()
+      - name: Failure notification to Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,job,took,eventName
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()
+  versioning_and_tagging:
+    runs-on: ubuntu-18.04    
+    steps:      
+      - uses: actions/checkout@v2
+      - name: Bump version and push tag
+        if: ${{ github.event_name == 'push' &&  !contains(join(toJSON(github.event.commits.*.message)), '#skip') }}
+        uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598      
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
