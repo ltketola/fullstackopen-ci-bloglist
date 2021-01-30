@@ -3,7 +3,6 @@ require('module-alias/register')
 const chokidar = require('chokidar')
 const express = require('express')
 const app = require('./server/app')
-const http = require('http')
 const logger = require('@util/logger')
 const path = require('path')
 
@@ -57,8 +56,6 @@ if (!inProduction) {
   app.use(express.static(DIST_PATH))
   app.get('/', (req, res) => res.sendFile(INDEX_PATH))
 }
-
-const server = http.createServer(app)
 
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`)
