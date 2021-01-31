@@ -81,7 +81,6 @@ app.use('/api/blogs', blogsRouter)
 
 if (process.env.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')
-  console.log('MOIIIIIIII')
   app.use('/api/testing', testingRouter)
 }
 

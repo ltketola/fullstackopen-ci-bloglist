@@ -58,7 +58,7 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: success()
+        if: ${{ github.event_name == 'push' &&  !contains(join(toJSON(github.event.commits.*.message)), '#skip') && success() }
       - name: Failure notification to Slack
         uses: 8398a7/action-slack@v3
         with:
