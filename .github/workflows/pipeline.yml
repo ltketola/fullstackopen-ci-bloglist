@@ -30,8 +30,11 @@ jobs:
       - name: e2e tests
         uses: cypress-io/github-action@v2
         with:
-          start: npm run start-prod
+          start: npm run start-test
           wait-on: http://localhost:5000
+        env: 
+          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          SECRET: ${{ secrets.SECRET }}
       - name: Deploy to Heroku 
         if: ${{ github.event_name == 'push' &&  !contains(join(toJSON(github.event.commits.*.message)), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.8.9
