@@ -1,12 +1,12 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3001/api/testing/reset')
-    cy.request('POST', 'http://localhost:3001/api/users/', {
+    cy.request('POST', 'http://localhost:5000/api/testing/reset')
+    cy.request('POST', 'http://localhost:5000/api/users/', {
       name: 'Matti Luukkainen',
       username: 'mluukkai',
       password: 'salainen'
     })
-    cy.visit('http://localhost:3000')
+    cy.visit('http://localhost:5000')
   })
 
   it('Login form is shown', function() {
@@ -78,7 +78,7 @@ describe('Blog app', function() {
       })
 
       it('other users cannot delete it', function() {
-        cy.request('POST', 'http://localhost:3001/api/users/', {
+        cy.request('POST', 'http://localhost:5000/api/users/', {
           name: 'Andy Tester',
           username: 'testandy',
           password: 'sekret'

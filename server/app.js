@@ -1,13 +1,15 @@
-const { MONGODB_URI } = require('./util/common')
-const express = require('express')
 require('express-async-errors')
+const express = require('express')
+const mongoose = require('mongoose')
+const chokidar = require('chokidar')
+const path = require('path')
 const cors = require('cors')
+const { MONGODB_URI, inProduction, inTest } = require('./util/common')
 const logger = require('./util/logger')
 const middleware = require('./middleware/middleware')
 const loginRouter = require('./controllers/login')
 const usersRouter = require('./controllers/users')
 const blogsRouter = require('./controllers/blogs')
-const mongoose = require('mongoose')
 
 const app = express()
 
@@ -26,6 +28,49 @@ mongoose
 mongoose.set('useFindAndModify', false)
 
 app.use(cors())
+
+/**
+ *  Use "hot loading" in backend
+ */
+const watcher = chokidar.watch('server') // Watch server folder
+watcher.on('ready', () => {
+  watcher.on('all', () => {
+    Object.keys(require.cache).forEach((id) => {
+      if (id.includes('server')) delete require.cache[id] // Delete all require caches that point to server folder (*)
+    })
+  })
+})
+
+/**
+ * For frontend use hot loading when in development, else serve the static content
+ */
+if (!inProduction && !inTest) {
+  /* eslint-disable */
+  const webpack = require('webpack')
+  const middleware = require('webpack-dev-middleware')
+  const hotMiddleWare = require('webpack-hot-middleware')
+  const webpackConf = require('@root/webpack.config')
+  /* eslint-enable */
+  const compiler = webpack(webpackConf('development', { mode: 'development' }))
+
+  const devMiddleware = middleware(compiler)
+  app.use(devMiddleware)
+  app.use(hotMiddleWare(compiler))
+  app.use('*', (req, res, next) => {
+    const filename = path.join(compiler.outputPath, 'index.html')
+    devMiddleware.waitUntilValid(() => {
+      compiler.outputFileSystem.readFile(filename, (err, result) => {
+        if (err) return next(err)
+        res.set('content-type', 'text/html')
+        res.send(result)
+        return res.end()
+      })
+    })
+  })
+} else {
+  app.use(express.static('dist'))
+}
+
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
@@ -36,6 +81,7 @@ app.use('/api/blogs', blogsRouter)
 
 if (process.env.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')
+  console.log('MOIIIIIIII')
   app.use('/api/testing', testingRouter)
 }
 
