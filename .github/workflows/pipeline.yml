@@ -35,6 +35,7 @@ jobs:
         env: 
           TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
           SECRET: ${{ secrets.SECRET }}
+          PORT: ${{ secrets.PORT }}
       - name: Deploy to Heroku 
         if: ${{ github.event_name == 'push' &&  !contains(join(toJSON(github.event.commits.*.message)), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.8.9
