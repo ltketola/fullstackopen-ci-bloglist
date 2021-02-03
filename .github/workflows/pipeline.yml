@@ -35,15 +35,14 @@ jobs:
         env: 
           TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
           SECRET: ${{ secrets.SECRET }}
-          PORT: ${{ secrets.PORT }}
       - name: Deploy to Heroku 
         if: ${{ github.event_name == 'push' &&  !contains(join(toJSON(github.event.commits.*.message)), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.8.9
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "fullstackopen-pokedex-demo"
+          heroku_app_name: "fullstack-ci-bloglist"
           heroku_email: "ltketola@gmail.com"
-          healthcheck: "https://fullstackopen-pokedex-demo.herokuapp.com/health"
+          healthcheck: "https://fullstack-ci-bloglist.herokuapp.com/api/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
       - name: Successful deployment notification to Slack
@@ -57,7 +56,7 @@ jobs:
               'icon_emoji': ':mittens_bernie:',
               'attachments': [{
                 'color': 'good',
-                'text': `A new version deployed to https://fullstackopen-pokedex-demo.herokuapp.com (${process.env.AS_COMMIT}). The build took ${process.env.AS_TOOK}.`,
+                'text': `A new version deployed to https://fullstack-ci-bloglist.herokuapp.com  (${process.env.AS_COMMIT}). The build took ${process.env.AS_TOOK}.`,
               }]
             }
         env:
