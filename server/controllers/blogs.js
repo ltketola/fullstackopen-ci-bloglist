@@ -18,7 +18,6 @@ blogsRouter.post('/', async (request, response) => {
     }
 
     const blog = new Blog(request.body)
-    // eslint-disable-next-line no-undef
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     const user = await User.findById(decodedToken.id)
 
@@ -51,7 +50,6 @@ blogsRouter.delete('/:id', async (request, response) => {
     if(!request.token) {
       return response.status(401).json({ error: 'token missing' })
     }
-    // eslint-disable-next-line no-undef
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
     const user = await User.findById(decodedToken.id)

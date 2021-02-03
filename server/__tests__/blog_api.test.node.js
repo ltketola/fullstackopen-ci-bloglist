@@ -144,7 +144,7 @@ describe('addition of a new blog to the list', () => {
 })
 
 describe('modifying a blog in database', () => {
-  test('increasing likes succeeds', async () => {
+  /*test('increasing likes succeeds', async () => {
     const newBlog = {
       title: 'Great developer experience',
       author: 'Hector Ramos',
@@ -169,7 +169,7 @@ describe('modifying a blog in database', () => {
     const blogsAtEnd = await helper.blogsInDb()
     const contents = blogsAtEnd.find(r => r.id === blogToUpdate.id)
     expect(contents.likes).toBe(8)
-  })
+  })*/
 
   test('succeeds with status code 204 if id is valid', async () => {
     const newBlog = {
