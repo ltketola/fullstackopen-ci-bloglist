@@ -80,4 +80,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
-          INITAL_VERSION: 0.0.1
+          RELEASE_BRANCHES: main
